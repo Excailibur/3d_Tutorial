@@ -15,16 +15,11 @@ public class GameSetUp : MonoBehaviour
     [SerializeField] GameObject ballPrefab;
     [SerializeField] Transform cueBallPosition;
     [SerializeField] Transform headBallPosition;
-    void Start()
+    private void Awake()
     {
-        ballRadius = ballPrefab.GetComponent<SphereCollider>().radius = 100f;
-        ballDiameter = ballRadius * 2;
+        ballRadius = ballPrefab.GetComponent<SphereCollider>().radius * 100f;
+        ballDiameter = ballRadius * 2f;
         PlaceAllBalls();
-    }
-
-    void Update()
-    {
-
     }
 
     private void PlaceAllBalls()
@@ -76,7 +71,6 @@ public class GameSetUp : MonoBehaviour
                 if (row == 2 && col == 1)
                 {
                     PlaceEightBall(currentPositon);
-                    continue;
                 }
                 //Randomly place red or blue ball
                 else if (redBallRemaining > 0 && blueBallRemaining > 0)
@@ -85,28 +79,25 @@ public class GameSetUp : MonoBehaviour
                     if (Rand == 0)
                     {
                         PlaceRedBall(currentPositon);
-                        continue;
                     }
                     else
                     {
                         PlaceBlueBall(currentPositon);
-                        continue;
                     }
                 }
                 //If only 
                 else if (redBallRemaining > 0)
                 {
                     PlaceRedBall(currentPositon);
-
                 }
                 else
                 {
                     PlaceBlueBall(currentPositon);
                 }
-
-                currentPositon += new Vector3(1, 0, 0).normalized * ballDiameter;
+                currentPositon += (new Vector3(1, 0, 0).normalized * ballDiameter);
             }
-            firstInRowPosition += new Vector3(-1, 0, -1).normalized * ballDiameter;
+
+            firstInRowPosition += Vector3.back * (Mathf.Sqrt(3) * ballRadius) + Vector3.left * ballRadius;
             currentPositon = firstInRowPosition;
             NumInThisRow++;
         }
