@@ -9,12 +9,16 @@ public class CameraController : MonoBehaviour
     [SerializeField] Vector3 offset;
     [SerializeField] float downAngle;
     [SerializeField] float power;
+    [SerializeField] GameObject cueStick;
+
     private float horizonalInput;
 
     Transform cueball;
+    GameManager gameManager;
 
     void Start()
     {
+        gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
         Cursor.lockState = CursorLockMode.Locked;
         foreach (GameObject ball in GameObject.FindGameObjectsWithTag("Ball"))
         {
@@ -42,17 +46,20 @@ public class CameraController : MonoBehaviour
             ResetCamera();
         }
 
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") && gameObject.GetComponent<Camera>().enabled)
         {
             Vector3 hitDirection = transform.forward;
             hitDirection = new Vector3(hitDirection.x, 0, hitDirection.z).normalized;
 
             cueball.gameObject.GetComponent<Rigidbody>().AddForce(hitDirection * power, ForceMode.Impulse);
+            cueStick.SetActive(false);
+            gameManager.SwitchCamera();
         }
     }
 
     public void ResetCamera()
     {
+        cueStick.SetActive(true);
         transform.position = cueball.position + offset;
         transform.LookAt(cueball.position);
         transform.localEulerAngles = new Vector3 (downAngle, transform.localEulerAngles.y, 0);
