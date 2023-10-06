@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -13,13 +14,18 @@ public class CameraController : MonoBehaviour
 
     private float horizonalInput;
 
+    private bool isTakingShot;
+    [SerializeField] float maxDrawDistance;
+    private float savedMousePosition;
+
     Transform cueball;
     GameManager gameManager;
+    [SerializeField] TextMeshProUGUI powerText;
 
     void Start()
     {
         gameManager = GameObject.FindGameObjectWithTag("Game Manager").GetComponent<GameManager>();
-        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Confined;
         foreach (GameObject ball in GameObject.FindGameObjectsWithTag("Ball"))
         {
             if (ball.GetComponent<Ball>().IsCueBall())
@@ -46,15 +52,7 @@ public class CameraController : MonoBehaviour
             ResetCamera();
         }
 
-        if (Input.GetButtonDown("Fire1") && gameObject.GetComponent<Camera>().enabled)
-        {
-            Vector3 hitDirection = transform.forward;
-            hitDirection = new Vector3(hitDirection.x, 0, hitDirection.z).normalized;
-
-            cueball.gameObject.GetComponent<Rigidbody>().AddForce(hitDirection * power, ForceMode.Impulse);
-            cueStick.SetActive(false);
-            gameManager.SwitchCamera();
-        }
+        Shoot();
     }
 
     public void ResetCamera()
@@ -63,5 +61,39 @@ public class CameraController : MonoBehaviour
         transform.position = cueball.position + offset;
         transform.LookAt(cueball.position);
         transform.localEulerAngles = new Vector3 (downAngle, transform.localEulerAngles.y, 0);
+    }
+
+    void Shoot()
+    {
+        if (gameObject.GetComponent<Camera>().enabled)
+        {
+            if(Input.GetButtonDown("Fire1") && !isTakingShot)
+            {
+                isTakingShot = true;
+                savedMousePosition = 0f;
+            }
+            else if (isTakingShot)
+            {
+                if(savedMousePosition + Input.GetAxis("Mouse Y") <= 0)
+                {
+                    savedMousePosition += Input.GetAxis("Mouse Y");
+                }
+                float powerValueNumber = ((savedMousePosition - 0) / (maxDrawDistance - 0)) * (100 - 0) + 0;
+                int powerValueRounded = Mathf.RoundToInt(powerValueNumber);
+                powerText.text = "Power: " + powerValueRounded.ToString() + "%";
+
+                if (Input.GetButtonDown("Fire1"))
+                {
+                    Vector3 hitDirection = transform.forward;
+                    hitDirection = new Vector3(hitDirection.x, 0, hitDirection.z).normalized;
+
+                    cueball.gameObject.GetComponent<Rigidbody>().AddForce(hitDirection * power * Mathf.Abs(savedMousePosition), ForceMode.Impulse);
+                    cueStick.SetActive(false);
+                    gameManager.SwitchCamera();
+                    isTakingShot = false;
+                }
+            }
+        }
+        
     }
 }

@@ -806,6 +806,8 @@ MonoBehaviour:
   downAngle: 15
   power: 1
   cueStick: {fileID: 3248787830098097638}
+  maxDrawDistance: -5
+  powerText: {fileID: 2123595718}
 --- !u!1 &388037409
 GameObject:
   m_ObjectHideFlags: 0
@@ -3784,7 +3786,7 @@ GameObject:
   - component: {fileID: 2123595719}
   - component: {fileID: 2123595718}
   m_Layer: 5
-  m_Name: Player Turn (1)
+  m_Name: Power Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3797,7 +3799,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2123595716}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3806,7 +3808,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 100}
+  m_AnchoredPosition: {x: 210, y: 90}
   m_SizeDelta: {x: 400, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2123595718

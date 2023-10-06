@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
     bool willSwapPlayers;
     bool isGameOver;
 
+    bool ballpocketed = false;
+
     [SerializeField] float shotTimer = 3f;
     private float currentTimer;
     [SerializeField] float movementThreshold;
@@ -49,14 +51,15 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        bool allStopped = true;
-        if (!movement && !isGameOver)
+        if (movement && !isGameOver)
         {
             currentTimer -= Time.deltaTime;
             if (currentTimer > 0)
             {
                 return;
             }
+
+            bool allStopped = true;
             foreach (GameObject ball in GameObject.FindGameObjectsWithTag("Ball"))
             {
                 if (ball.GetComponent<Rigidbody>().velocity.magnitude >= movementThreshold)
@@ -65,19 +68,21 @@ public class GameManager : MonoBehaviour
                     break;
                 }
             }
-        }
-        if (allStopped)
-        {
-            movement = false;
-            if (willSwapPlayers)
+
+            if (allStopped)
             {
-                NextPlayerTurn();
+                movement = false;
+                if (willSwapPlayers || !ballpocketed)
+                {
+                    NextPlayerTurn();
+                }
+                else
+                {
+                    SwitchCamera();
+                }
+                currentTimer = shotTimer;
+                ballpocketed = false;
             }
-            else
-            {
-                SwitchCamera();
-            }
-            currentTimer = shotTimer;
         }
     }
 
@@ -139,7 +144,7 @@ public class GameManager : MonoBehaviour
 
     void ScratchOnWinningShot(string playerName)
     {
-        Lose(playerName + "Scratched on Final Shot and has lost");
+        Lose(playerName + " scratched on Final Shot and has lost");
     }
 
     bool CheckBall(Ball ball)
@@ -243,17 +248,15 @@ public class GameManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("true");
         if(other.gameObject.tag == "Ball")
         {
-            Debug.Log("ball");
+            ballpocketed = true;
             if (CheckBall(other.gameObject.GetComponent<Ball>()))
             {
                 Destroy(other.gameObject);
             }
             else
             {
-                Debug.Log("cueball");
                 other.gameObject.transform.position = headPosition.position;
                 other.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
                 other.gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
